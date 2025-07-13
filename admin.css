@@ -1,0 +1,71 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f6f6f6;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+}
+
+.panel {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    max-width: 500px;
+    width: 100%;
+}
+
+h1, h2 {
+    margin-top: 0;
+    color: #004466;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+input[type="file"],
+input[type="password"],
+button {
+    padding: 10px;
+    font-size: 1em;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+button {
+    background: #004466;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button.danger {
+    background: #c62828;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+p.success {
+    background: #d4edda;
+    color: #155724;
+    padding: 10px;
+    border-left: 4px solid #28a745;
+    margin-bottom: 15px;
+}
+
+p.error {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-left: 4px solid #dc3545;
+    margin-top: 10px;
+}
+
+a.link {
+    color: #004466;
+    text-decoration: none;
+}
