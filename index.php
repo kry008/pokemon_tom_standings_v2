@@ -91,7 +91,7 @@ function generateHTML($tournamentName, $matches, $playerMap): string {
         th { background: #eeeeee; }
         tr:nth-child(even) { background: #fafafa; }
 
-        @media (max-width: 600px) {
+        @media (max-width: 850px) {
             table, thead, tbody, th, td, tr { display: block; }
             thead { display: none; }
             tr {
