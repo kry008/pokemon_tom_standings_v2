@@ -301,7 +301,7 @@ function generateEmptyHTML(): string {
 <body>
 
 <div class="message">
-      <img src="https://flamberg.com.pl/data/gfx/mask/pol/logo_1_big.png" />
+      <img src="https://kry008.xyz/images/logo.webp" />
     <h1>Oczekiwanie na dane turniejowe...</h1>
 
     <p>Plik XML jest pusty lub jeszcze nie został wygenerowany.</p>
