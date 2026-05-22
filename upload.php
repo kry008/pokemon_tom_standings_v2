@@ -1,4 +1,5 @@
 <?php
+  //upload.xml
 session_start();
 $db = new PDO('sqlite:tournament.sqlite');
 libxml_use_internal_errors(true);
@@ -7,7 +8,7 @@ libxml_use_internal_errors(true);
 if (isset($_POST['clear_view'])) {
     if (file_exists('uploads/tournament.xml')) unlink('uploads/tournament.xml');
     if (file_exists('output.html')) unlink('output.html');
-    $_SESSION['message'] = "✅ Widok został wyczyszczony. Dane graczy pozostały w bazie.";
+    $_SESSION['message'] = "✅ Ok";
     header("Location: admin.php");
     exit;
 }
@@ -23,7 +24,7 @@ if (isset($_FILES['xmlfile']) && $_FILES['xmlfile']['error'] === UPLOAD_ERR_OK) 
     $xmlContent = file_get_contents($destination);
     $xml = simplexml_load_string($xmlContent);
     if (!$xml) {
-        $_SESSION['message'] = "❌ Błąd: Nieprawidłowy plik XML.";
+        $_SESSION['message'] = "❌ Błąd: <br />Nieprawidłowy plik XML.";
         header("Location: admin.php");
         exit;
     }
@@ -54,35 +55,62 @@ if (isset($_FILES['xmlfile']) && $_FILES['xmlfile']['error'] === UPLOAD_ERR_OK) 
         $stmt->execute([$id, $month, $id, $month]);
     }
 
-    // Generowanie HTML
-    $rounds = $xml->pods->pod->rounds->round;
-    $latest = is_array($rounds) ? usort($rounds, fn($a, $b) => (int)$b['number'] - (int)$a['number']) ? $rounds[0] : null : $rounds;
+// Generowanie HTML
+$html = '<!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8"><title>' . htmlspecialchars($tournamentName) . '</title>';
+$html .= '<link rel="stylesheet" href="tournament.css"></head><body>';
+$html .= '<header><h1>' . htmlspecialchars($tournamentName) . '</h1></header><main>';
 
-    $html = '<!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8"><title>'.$tournamentName.'</title>';
-    $html .= '<link rel="stylesheet" href="tournament.css"></head><body>';
-    $html .= '<header><h1>'.$tournamentName.'</h1></header><main><table><thead><tr><th>Stół</th><th>Gracz 1</th><th>Gracz 2</th></tr></thead><tbody>';
+// Iteracja po wszystkich dywizjach (podach)
+foreach ($xml->pods->pod as $pod) {
+    $category = (string)$pod['category'];
+    $rounds = $pod->rounds->round;
 
-    foreach ($latest->matches->match as $match) {
+    // Znajdź ostatnią rundę w tej dywizji
+    if (is_array($rounds) || $rounds instanceof Traversable) {
+        $latestRound = null;
+        $maxNumber = 0;
+        foreach ($rounds as $r) {
+            $num = (int)$r['number'];
+            if ($num > $maxNumber) {
+                $maxNumber = $num;
+                $latestRound = $r;
+            }
+        }
+    } else {
+        $latestRound = $rounds;
+    }
+
+    if (!$latestRound) continue;
+
+    $html .= '<section>';
+    $html .= '<h2>Dywizja ' . htmlspecialchars($category) . '</h2>';
+    $html .= '<table><thead><tr><th>Stół</th><th>Gracz 1</th><th>Gracz 2</th></tr></thead><tbody>';
+
+    foreach ($latestRound->matches->match as $match) {
         $table = $match->tablenumber ?? '-';
-        $p1 = $match->player1['userid'] ?? $match->player['userid'] ?? null;
+        $p1 = $match->player1['userid'] ?? null;
         $p2 = $match->player2['userid'] ?? null;
 
         $stmt = $db->prepare("SELECT firstname, lastname FROM players WHERE player_id = ?");
         $stmt->execute([$p1]);
         $p1n = $stmt->fetch();
-        $p1name = $p1n ? $p1n['firstname'].' '.$p1n['lastname'] : '???';
+        $p1name = $p1n ? $p1n['firstname'] . ' ' . $p1n['lastname'] : '???';
 
         $stmt->execute([$p2]);
         $p2n = $stmt->fetch();
-        $p2name = $p2n ? $p2n['firstname'].' '.$p2n['lastname'] : '???';
+        $p2name = $p2n ? $p2n['firstname'] . ' ' . $p2n['lastname'] : '???';
 
         $html .= "<tr><td data-label='Stół'>{$table}</td><td data-label='Gracz 1'>{$p1name}</td><td data-label='Gracz 2'>{$p2name}</td></tr>";
     }
 
-    $html .= '</tbody></table></main></body></html>';
-    file_put_contents('output.html', $html);
+    $html .= '</tbody></table></section>';
+}
 
-    $_SESSION['message'] = "✅ Turniej „$tournamentName” został załadowany.";
+$html .= '</main></body></html>';
+file_put_contents('output.html', $html);
+
+
+    $_SESSION['message'] = '✅ Turniej: <br/>'.$tournamentName.'<br/>został załadowany.';
     header("Location: admin.php");
     exit;
 }

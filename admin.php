@@ -1,4 +1,5 @@
 <?php
+  //admin.php
 session_start();
 
 $dbFile = 'tournament.sqlite';
