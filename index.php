@@ -301,7 +301,7 @@ function generateEmptyHTML(): string {
 <body>
 
 <div class="message">
-      <img src="https://kry008.xyz/images/logo.webp" />
+      <img src="https://kry008.xyz/images/logo.webp" height="200" />
     <h1>Oczekiwanie na dane turniejowe...</h1>
 
     <p>Plik XML jest pusty lub jeszcze nie został wygenerowany.</p>
