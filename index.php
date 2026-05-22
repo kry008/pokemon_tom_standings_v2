@@ -48,9 +48,16 @@ function mapCategoryName($cat) {
     return $map[$cat] ?? $cat;
 }
 
+function getBaseUrl(): string {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $scriptDir = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/');
+    return $scheme . '://' . $host . ($scriptDir !== '' ? $scriptDir : '') . '/';
+}
+
 function generateHTML($tournamentName, $pods, $playerMap): string {
 
-    $url = 'https://turniej.kry008.top/';
+    $url = getBaseUrl();
     $qr = 'https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=' . urlencode($url);
 
     $sections = '';
@@ -227,7 +234,7 @@ HTML;
 
 function generateEmptyHTML(): string {
 
-    $url = 'https://turniej.kry008.top/';
+    $url = getBaseUrl();
     $qr = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urlencode($url);
 
     return <<<HTML
