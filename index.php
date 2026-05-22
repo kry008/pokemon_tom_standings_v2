@@ -224,7 +224,7 @@ function generateHTML($tournamentName, $pods, $playerMap): string {
     </div>
 </header>
 <main>
-    <h2 style="font-size:1.4em; color:#555;"><?php echo getBaseUrl(); ?></h2>
+    <h2 style="font-size:1.4em; color:#555;">{$url}</h2>
     {$sections}
 </main>
 </body>
